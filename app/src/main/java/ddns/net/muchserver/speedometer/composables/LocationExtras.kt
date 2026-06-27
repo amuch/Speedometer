@@ -51,7 +51,6 @@ fun LocationExtras(
         val bearingDegrees = DECIMAL_FORMAT_TENTHS.format(bearing).toString()
         val bearingDirection = calculateDirection(bearing.toFloat())
 
-        val latLong = "$latitude $longitude"
         val modifier = Modifier.fillMaxWidth().padding(2.dp)
         DisplayRow(
             modifier = modifier,

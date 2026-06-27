@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Speedometer</string>
+    <string name="location_services_denied">
+        Without location services, the app will not function correctly.
+        Please enable location services for this app.
+    </string>
+    <string name="service_start">Start Service</string>
+    <string name="service_stop">Stop Service</string>
+</resources>

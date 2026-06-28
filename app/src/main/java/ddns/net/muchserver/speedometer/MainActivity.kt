@@ -55,7 +55,8 @@ class MainActivity : ComponentActivity() {
                         activity = this,
                         viewModelSettings = viewModelSettings,
                         viewModelPreferences = viewModelPreferences,
-                        viewModelSpeedometer = viewModelSpeedometer
+                        viewModelSpeedometer = viewModelSpeedometer,
+                        viewModelTrip = viewModelTrip
                     )
                 }
             }

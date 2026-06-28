@@ -29,6 +29,7 @@ import ddns.net.muchserver.speedometer.MainActivity
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelPreferences
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelSettings
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelSpeedometer
+import ddns.net.muchserver.speedometer.viewmodel.ViewModelTrip
 
 const val INDEX_BACKGROUND = 0
 const val INDEX_TEXT = 1
@@ -36,13 +37,16 @@ const val INDEX_ACCENT = 2
 const val INDEX_BACKGROUND_BUTTON = 3
 const val INDEX_TEXT_BUTTON = 4
 
+val PADDING_ROW = 10.dp
+
 @Composable
 fun MainScreen(
     modifier: Modifier,
     activity: MainActivity,
     viewModelSettings: ViewModelSettings,
     viewModelPreferences: ViewModelPreferences,
-    viewModelSpeedometer: ViewModelSpeedometer
+    viewModelSpeedometer: ViewModelSpeedometer,
+    viewModelTrip: ViewModelTrip
 ) {
     val configuration = LocalConfiguration.current
     val orientation = configuration.orientation
@@ -100,7 +104,7 @@ fun MainScreen(
                         if(Configuration.ORIENTATION_PORTRAIT == orientation) Alignment.TopCenter
                         else Alignment.CenterStart
                     )
-                    .padding(10.dp)
+                    .padding(PADDING_ROW)
                     .background(color = Color.Transparent)
             ),
             colors = colors,
@@ -132,7 +136,8 @@ fun MainScreen(
             colors = colors,
             viewModelPreferences = viewModelPreferences,
             viewModelSpeedometer =  viewModelSpeedometer,
-            viewModelSettings = viewModelSettings
+            viewModelSettings = viewModelSettings,
+            viewModelTrip = viewModelTrip
         )
     }
 }

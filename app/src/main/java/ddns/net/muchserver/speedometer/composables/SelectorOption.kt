@@ -16,6 +16,7 @@ import ddns.net.muchserver.speedometer.viewmodel.MenuVisible
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelPreferences
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelSettings
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelSpeedometer
+import ddns.net.muchserver.speedometer.viewmodel.ViewModelTrip
 
 @Composable
 fun SelectorOption(
@@ -24,7 +25,8 @@ fun SelectorOption(
     colors: List<Color>,
     viewModelSettings: ViewModelSettings,
     viewModelPreferences: ViewModelPreferences,
-    viewModelSpeedometer: ViewModelSpeedometer
+    viewModelSpeedometer: ViewModelSpeedometer,
+    viewModelTrip: ViewModelTrip
 ) {
     Box(
        modifier = modifier
@@ -32,7 +34,7 @@ fun SelectorOption(
         val menuVisible by viewModelSettings.menuVisible.observeAsState(MenuVisible.MENU_MAP)
         val modifierOption = Modifier
             .fillMaxSize()
-            .padding(10.dp)
+            .padding(PADDING_ROW)
             .border(2.dp, colors[INDEX_ACCENT], shape = RoundedCornerShape(10.dp))
         when(menuVisible) {
             MenuVisible.MENU_CONTROLS -> {
@@ -53,14 +55,15 @@ fun SelectorOption(
                     viewModelSettings = viewModelSettings
                 )
             }
-
             MenuVisible.MENU_TRIP -> {
                 LayoutTrip(
                     modifier = modifierOption,
-                    colors = colors
+                    colors = colors,
+                    viewModelSettings = viewModelSettings,
+                    viewModelSpeedometer = viewModelSpeedometer,
+                    viewModelTrip = viewModelTrip
                 )
             }
-
             MenuVisible.MENU_MAP,
             null -> {
                 MapGauge(

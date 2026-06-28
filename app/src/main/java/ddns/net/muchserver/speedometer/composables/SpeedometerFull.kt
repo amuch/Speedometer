@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import android.location.Location
@@ -15,6 +14,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ddns.net.muchserver.speedometer.R
 import ddns.net.muchserver.speedometer.logic.FORMAT_SCALE
+import ddns.net.muchserver.speedometer.logic.formatAltitude
+import ddns.net.muchserver.speedometer.logic.formatLatitude
+import ddns.net.muchserver.speedometer.logic.formatLongitude
 import ddns.net.muchserver.speedometer.logic.formatSpeed
 import ddns.net.muchserver.speedometer.logic.formatSpeedUnits
 import ddns.net.muchserver.speedometer.logic.scaleIncrements
@@ -56,9 +59,16 @@ val FONT_SIZE_SPEED_MAIN = 60.sp
 val FONT_SIZE_UNITS_MAIN = 35.sp
 val FONT_SIZE_SPEED_MAX = 20.sp
 val FONT_SIZE_BEARING = 22.sp
+val FONT_SIZE_ALTITUDE = 20.sp
+val FONT_SIZE_LAT_LONG = FONT_SIZE_ALTITUDE
 
 const val OFFSET_FACTOR_VERTICAL_SPEED = 0.70f
 const val OFFSET_FACTOR_VERTICAL_SPEED_MAX = 0.90f
+const val OFFSET_FACTOR_VERTICAL_ALTITUDE = 0.88f
+const val OFFSET_FACTOR_VERTICAL_LAT_LONG = 0.05f
+const val OFFSET_FACTOR_HORIZONTAL_ALTITUDE = 0.03f
+const val OFFSET_FACTOR_HORIZONTAL_LATITUDE = OFFSET_FACTOR_HORIZONTAL_ALTITUDE
+const val OFFSET_FACTOR_HORIZONTAL_LONGITUDE = OFFSET_FACTOR_HORIZONTAL_LATITUDE + 0.17f
 
 const val START_ANGLE = -225f
 const val SWEEP_ANGLE_MAX = 270f
@@ -90,6 +100,8 @@ fun SpeedometerFull(
 
         if(viewModelSettings.isFullScreen.value!!) {
             drawBearing(this, colors, location, textMeasurer, fontFamily)
+            drawLatLong(this, colors, textMeasurer, fontFamily, location)
+            drawAltitude(this, colors, textMeasurer, fontFamily, location, isStandardUnits)
         }
     }
 }
@@ -341,6 +353,67 @@ fun drawSpeed(
         textLayoutResult = textMeasuredUnits,
         color = colors[INDEX_TEXT],
         topLeft = offsetUnits
+    )
+}
+
+fun drawLatLong(
+    drawScope: DrawScope,
+    colors: List<Color>,
+    textMeasurer: TextMeasurer,
+    fontFamily: FontFamily,
+    location: Location?
+) {
+    val latitudeFormatted = formatLatitude(location?.latitude ?: 0.0)
+    val longitudeFormatted = formatLongitude(location?.longitude ?: 0.0)
+    val textMeasuredLatitude = textMeasurer.measure(
+        latitudeFormatted,
+        style = TextStyle(fontSize = FONT_SIZE_LAT_LONG, fontFamily = fontFamily)
+    )
+    val textMeasuredLongitude = textMeasurer.measure(
+        longitudeFormatted,
+        style = TextStyle(fontSize = FONT_SIZE_LAT_LONG, fontFamily = fontFamily)
+    )
+    val offsetLatitude = Offset(
+        x = drawScope.size.width * OFFSET_FACTOR_HORIZONTAL_LATITUDE,
+        y = drawScope.size.height * OFFSET_FACTOR_VERTICAL_LAT_LONG
+    )
+    val offsetLongitude = Offset(
+        x = drawScope.size.width * OFFSET_FACTOR_HORIZONTAL_LONGITUDE,
+        y = drawScope.size.height * OFFSET_FACTOR_VERTICAL_LAT_LONG
+    )
+    drawScope.drawText(
+        textLayoutResult = textMeasuredLatitude,
+        color = colors[INDEX_TEXT],
+        topLeft = offsetLatitude
+    )
+    drawScope.drawText(
+        textLayoutResult = textMeasuredLongitude,
+        color = colors[INDEX_TEXT],
+        topLeft = offsetLongitude
+    )
+}
+
+fun drawAltitude(
+    drawScope: DrawScope,
+    colors: List<Color>,
+    textMeasurer: TextMeasurer,
+    fontFamily: FontFamily,
+    location: Location?,
+    isStandardUnits: Boolean
+) {
+    val altitudeFormatted = formatAltitude(location?.altitude ?: 0.0, isStandardUnits)
+    val textMeasuredAltitude = textMeasurer.measure(
+        altitudeFormatted,
+        style = TextStyle(fontSize = FONT_SIZE_ALTITUDE, fontFamily = fontFamily)
+    )
+    val offsetAltitude = Offset(
+        x = drawScope.size.width * OFFSET_FACTOR_HORIZONTAL_ALTITUDE,
+        y = drawScope.size.height * OFFSET_FACTOR_VERTICAL_ALTITUDE
+    )
+    drawScope.drawText(
+        textLayoutResult = textMeasuredAltitude,
+        color = colors[INDEX_TEXT],
+        topLeft = offsetAltitude
     )
 }
 

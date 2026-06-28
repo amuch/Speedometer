@@ -68,18 +68,10 @@ fun SelectorSpeedometer(
     viewModelSpeedometer: ViewModelSpeedometer,
 ) {
     val scrollStateMenu = rememberScrollState()
-    val scrollStateExtras = rememberScrollState()
     val rotationIconFull = rotationIconFullScreen(orientation, isFullScreen)
 
     Box(
-        modifier = modifier.then(Modifier
-            .background(Color.Transparent)
-//            .border(
-//                width = 2.dp,
-//                color = colors[INDEX_ACCENT],
-//                shape = RoundedCornerShape(10.dp)
-//            )
-        )
+        modifier = modifier.then(Modifier.background(Color.Transparent))
     ) {
         SpeedometerFull(
             modifier = Modifier.fillMaxSize(),
@@ -87,26 +79,7 @@ fun SelectorSpeedometer(
             viewModelSpeedometer = viewModelSpeedometer,
             viewModelSettings = viewModelSettings
         )
-        AnimatedVisibility(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.3f)
-                .align(Alignment.TopStart)
-                .verticalScroll(scrollStateExtras),
-            enter = slideInHorizontally(animationSpec = tween(durationMillis = MILLISECONDS_ANIMATE_IN)),
-            exit = fadeOut(animationSpec = tween(durationMillis = MILLISECONDS_SHRINK_HORIZONTALLY))
-                 + shrinkHorizontally(animationSpec = tween(durationMillis = MILLISECONDS_SHRINK_HORIZONTALLY)),
-            visible = isFullScreen
-        ) {
-            LocationExtras(
-                modifier = Modifier.fillMaxSize(),
-                colors = colors,
-                viewModelSpeedometer = viewModelSpeedometer,
-                viewModelSettings = viewModelSettings
-            )
-        }
         val modifierButton = Modifier.width(60.dp)
-
         Column(
             modifier = Modifier
                 .fillMaxHeight()
@@ -237,6 +210,5 @@ fun SelectorSpeedometer(
                 )
             }
         }
-
     }
 }

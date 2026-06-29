@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+const val INDEX_SETTINGS_NONE = -1
 class ViewModelSettings: ViewModel() {
     private val _schemeColor = MutableStateFlow<List<Color>>(schemeLight(0))
     val schemeColor: StateFlow<List<Color>> = _schemeColor.asStateFlow()
@@ -33,6 +34,8 @@ class ViewModelSettings: ViewModel() {
     val setMenuVisible = { menuEnum: MenuVisible -> menuVisible.value = menuEnum }
     val standardUnits: MutableLiveData<Boolean> = MutableLiveData(true)
     val setStandardUnits = {isStandard: Boolean -> standardUnits.value = isStandard}
+    val indexOpenSetting: MutableLiveData<Int> = MutableLiveData(INDEX_SETTINGS_NONE)
+    val setIndexOpenSetting = {index: Int -> indexOpenSetting.value = index}
 
     fun schemeDark(index: Int): List<Color> {
         when(index) {

@@ -34,11 +34,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ddns.net.muchserver.speedometer.R
+import ddns.net.muchserver.speedometer.viewmodel.INDEX_SETTINGS_NONE
 import ddns.net.muchserver.speedometer.viewmodel.MenuVisible
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelSettings
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelSpeedometer
 
 const val MILLISECONDS_ANIMATE_IN = 800
+const val MILLISECONDS_ANIMATE_OUT = 500
 
 const val MILLISECONDS_SHRINK_HORIZONTALLY = 200
 const val MILLISECONDS_SHRINK_VERTICALLY = 500
@@ -99,7 +101,12 @@ fun SelectorSpeedometer(
                     if(!isFullScreen) {
                         Button(
                             modifier = modifierButton,
-                            onClick = { viewModelSettings.setMenuVisible(MenuVisible.MENU_MAP) },
+                            onClick = {
+                                if(viewModelSettings.menuVisible.value != MenuVisible.MENU_MAP) {
+                                    viewModelSettings.setMenuVisible(MenuVisible.MENU_MAP)
+                                    viewModelSettings.setIndexOpenSetting(INDEX_SETTINGS_NONE)
+                                }
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colors[INDEX_BACKGROUND_BUTTON],
                                 contentColor = colors[INDEX_TEXT_BUTTON]
@@ -114,7 +121,12 @@ fun SelectorSpeedometer(
                         }
                         Button(
                             modifier = modifierButton,
-                            onClick = { viewModelSettings.setMenuVisible(MenuVisible.MENU_TRIP) },
+                            onClick = {
+                                if(viewModelSettings.menuVisible.value != MenuVisible.MENU_TRIP) {
+                                    viewModelSettings.setMenuVisible(MenuVisible.MENU_TRIP)
+                                    viewModelSettings.setIndexOpenSetting(INDEX_SETTINGS_NONE)
+                                }
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colors[INDEX_BACKGROUND_BUTTON],
                                 contentColor = colors[INDEX_TEXT_BUTTON]
@@ -129,7 +141,12 @@ fun SelectorSpeedometer(
                         }
                         Button(
                             modifier = modifierButton,
-                            onClick = { viewModelSettings.setMenuVisible(MenuVisible.MENU_CONTROLS) },
+                            onClick = {
+                                if(viewModelSettings.menuVisible.value != MenuVisible.MENU_CONTROLS) {
+                                    viewModelSettings.setIndexOpenSetting(INDEX_SETTINGS_NONE)
+                                    viewModelSettings.setMenuVisible(MenuVisible.MENU_CONTROLS)
+                                }
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colors[INDEX_BACKGROUND_BUTTON],
                                 contentColor = colors[INDEX_TEXT_BUTTON]
@@ -143,7 +160,12 @@ fun SelectorSpeedometer(
                         }
                         Button(
                             modifier = modifierButton,
-                            onClick = { viewModelSettings.setMenuVisible(MenuVisible.MENU_PREFERENCES) },
+                            onClick = {
+                                if(viewModelSettings.menuVisible.value != MenuVisible.MENU_PREFERENCES) {
+                                    viewModelSettings.setIndexOpenSetting(INDEX_SETTINGS_NONE)
+                                    viewModelSettings.setMenuVisible(MenuVisible.MENU_PREFERENCES)
+                                }
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colors[INDEX_BACKGROUND_BUTTON],
                                 contentColor = colors[INDEX_TEXT_BUTTON]
@@ -178,6 +200,7 @@ fun SelectorSpeedometer(
                                 viewModelSettings.setMenuVisible(MenuVisible.MENU_MAP)
                             }
                             setIsFullScreen(!isFullScreen)
+                            viewModelSettings.setIndexOpenSetting(INDEX_SETTINGS_NONE)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colors[INDEX_BACKGROUND_BUTTON],

@@ -66,7 +66,7 @@ fun LayoutSettings(
             messages = arrayOf(
                 "Service On",
                 "Service Off",
-                "This setting runs a background service. Location updates can continue in the background if this setting is enabled."
+                "Enable to run a background service. Location updates can continue in the background if enabled."
             ),
             index = 2,
             composable = null
@@ -81,7 +81,7 @@ fun LayoutSettings(
             messages = arrayOf(
                 "Screen On",
                 "Screen Off",
-                "This setting assures that the screen stays on while the app is running. This will reduce battery life."
+                "Enable to ensure that screen stays illuminated while the app is running. This will reduce battery life."
             ),
             index = 3,
             composable = null

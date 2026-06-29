@@ -226,7 +226,6 @@ fun drawBearing(
                     y = centerY + radiusArc * factorArrow
                 ),
                 end = offsetTop,
-//                color = colors[INDEX_TEXT],
                 strokeWidth = strokeWidth,
                 cap = StrokeCap.Round
             )
@@ -238,7 +237,6 @@ fun drawBearing(
                     x = centerX - radiusArc * factorOffestHor,
                     y = centerY + radiusArc * factorOffsetVert
                 ),
-//                color = colors[INDEX_TEXT],
                 strokeWidth = strokeWidth,
                 cap = StrokeCap.Round
             )
@@ -250,7 +248,6 @@ fun drawBearing(
                     x = centerX + radiusArc * factorOffestHor,
                     y = centerY + radiusArc * factorOffsetVert
                 ),
-//                color = colors[INDEX_TEXT],
                 strokeWidth = strokeWidth,
                 cap = StrokeCap.Round
             )

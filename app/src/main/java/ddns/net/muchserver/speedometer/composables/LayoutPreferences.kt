@@ -76,7 +76,7 @@ fun LayoutPreferences(
             messages = arrayOf(
                 "Dark Mode",
                 "Light Mode",
-                "This setting is responsible for setting the color scheme of the application."
+                "Enable to set the color scheme of the application to Dark Mode. Use the slider to select your preferred scheme."
             ),
             index = 0,
             composable = {
@@ -114,7 +114,7 @@ fun LayoutPreferences(
             messages = arrayOf(
                 "Standard Units",
                 "SI Units",
-                "This setting determines the units in which the speed, distance, and altitude are reported. When toggled, speed will be reported in miles per hour, distance in miles, and altitude in feet. Otherwise, speed will be reported in kilometers per hour, distance in kilometers, and altitude in meters."
+                "Enable to use standard units. When enabled, speed will be reported in miles per hour, distance in miles, and altitude in feet. Otherwise, speed will be reported in kilometers per hour, distance in kilometers, and altitude in meters."
             ),
             index = 1,
         )

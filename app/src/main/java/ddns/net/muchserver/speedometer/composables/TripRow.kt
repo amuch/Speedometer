@@ -1,6 +1,5 @@
 package ddns.net.muchserver.speedometer.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,8 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ddns.net.muchserver.speedometer.database.Trip
 import ddns.net.muchserver.speedometer.viewmodel.ViewModelTrip
+
+val FONT_SIZE_TRIP = 20.sp
 
 @Composable
 fun TripRow(
@@ -37,6 +40,7 @@ fun TripRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(fractionHeight)
+                .padding(horizontal = PADDING_ROW)
                 .clickable(enabled = true) {
                 isExpanded = !isExpanded
             }
@@ -44,6 +48,7 @@ fun TripRow(
             Text(
                 text = trip.name,
                 color = colors[INDEX_TEXT],
+                fontSize = FONT_SIZE_TRIP
             )
         }
         if(isExpanded) {

@@ -10,10 +10,15 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.toArgb
 import android.location.Location
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -64,11 +69,13 @@ val FONT_SIZE_LAT_LONG = FONT_SIZE_ALTITUDE
 
 const val OFFSET_FACTOR_VERTICAL_SPEED = 0.70f
 const val OFFSET_FACTOR_VERTICAL_SPEED_MAX = 0.90f
-const val OFFSET_FACTOR_VERTICAL_ALTITUDE = 0.88f
+const val OFFSET_FACTOR_VERTICAL_ALTITUDE = 0.13f
 const val OFFSET_FACTOR_VERTICAL_LAT_LONG = 0.05f
 const val OFFSET_FACTOR_HORIZONTAL_ALTITUDE = 0.03f
 const val OFFSET_FACTOR_HORIZONTAL_LATITUDE = OFFSET_FACTOR_HORIZONTAL_ALTITUDE
 const val OFFSET_FACTOR_HORIZONTAL_LONGITUDE = OFFSET_FACTOR_HORIZONTAL_LATITUDE + 0.17f
+
+const val OFFSET_FACTOR_VERTICAL_BEARING = OFFSET_FACTOR_VERTICAL_LAT_LONG
 
 const val START_ANGLE = -225f
 const val SWEEP_ANGLE_MAX = 270f
@@ -83,6 +90,10 @@ fun SpeedometerFull(
     val location by viewModelSpeedometer.currentLocation.collectAsStateWithLifecycle()
     val isStandardUnits: Boolean by viewModelSettings.standardUnits.observeAsState(true)
     val speedMax: Float by viewModelSpeedometer.speedMax.observeAsState(0.0f)
+    var bearing by remember { mutableFloatStateOf(0.0f) }
+    if(location?.hasBearing() ?: false) {
+        bearing = location!!.bearing
+    }
 
     val textMeasurer = rememberTextMeasurer()
     val fontFamily = remember {
@@ -99,7 +110,7 @@ fun SpeedometerFull(
         drawScale(this, colors, speedMax, textMeasurer, fontFamily, isStandardUnits)
 
         if(viewModelSettings.isFullScreen.value!!) {
-            drawBearing(this, colors, location, textMeasurer, fontFamily)
+            drawBearing(this, colors, bearing, textMeasurer, fontFamily)
             drawLatLong(this, colors, textMeasurer, fontFamily, location)
             drawAltitude(this, colors, textMeasurer, fontFamily, location, isStandardUnits)
         }
@@ -118,6 +129,12 @@ fun drawNeedle(
     val height = drawScope.size.height
     val centerX = 0.5f * width
     val centerY = 0.5f * height
+
+    val colorStops = arrayOf(
+        0.30f to colors[INDEX_BACKGROUND_BUTTON],
+        0.75f to  colors[INDEX_TEXT]
+    )
+    val brush = Brush.verticalGradient(colorStops = colorStops)
 
     val sideShorter = min(width, height)
     val segment = sideShorter / 30
@@ -138,7 +155,7 @@ fun drawNeedle(
     }) {
         drawPath(
             path = pathNeedle,
-            color = colors[INDEX_TEXT]
+            brush = brush
         )
     }
 }
@@ -146,17 +163,18 @@ fun drawNeedle(
 fun drawBearing(
     drawScope: DrawScope,
     colors: List<Color>,
-    location: Location?,
+    bearing: Float,
     textMeasurer: TextMeasurer,
     fontFamily: FontFamily,
 ) {
-    val bearing = location?.bearing ?: 0f
     val width = drawScope.size.width
     val height = drawScope.size.height
     val sideShorter = min(width, height)
     val radiusArc = 0.15f * sideShorter
     val centerX = 0.5f * width
     val centerY = 0.5f * height
+
+    val offsetVertical = -0.26f * height
 
     val directions = listOf("N", "E", "S", "W")
     for(i in 0 until directions.size) {
@@ -165,7 +183,7 @@ fun drawBearing(
             text = textDirection,
             style = TextStyle(fontSize = FONT_SIZE_BEARING, fontFamily = fontFamily)
         )
-        val theta = i * 0.5f * PI.toFloat()
+        val theta = i * 0.5f * PI.toFloat() + 0.5f * PI.toFloat()
         val x = (centerX - textMeasuredDirection.size.width / 2 - cos(theta) * radiusArc).toFloat()
         val y = (centerY - textMeasuredDirection.size.height / 2 - sin(theta) * radiusArc).toFloat()
         val offsetInterval = Offset(
@@ -173,13 +191,68 @@ fun drawBearing(
             y
         )
         drawScope.withTransform({
-            translate(top = -0.32f * height, left = 0.40f * width)
-            rotate(bearing)
+            translate(top = offsetVertical, left = 0.40f * width)
         }) {
             drawText(
                 textLayoutResult = textMeasuredDirection,
                 color = colors[INDEX_TEXT],
                 topLeft = offsetInterval
+            )
+        }
+
+        val colorStops = arrayOf(
+            0.30f to colors[INDEX_BACKGROUND_BUTTON],
+            0.75f to  colors[INDEX_TEXT]
+        )
+        val brush = Brush.verticalGradient(colorStops = colorStops)
+
+        val factorArrow = 0.45f
+        val factorOffsetVert = -0.15f
+        val factorOffestHor = 0.25f
+
+        val offsetTop = Offset(
+            x =  centerX,
+            y = centerY - radiusArc * factorArrow
+        )
+        val strokeWidth = 12.0f
+        drawScope.withTransform({
+            translate(top = offsetVertical, left = 0.40f * width)
+            rotate(bearing)
+        }) {
+            drawLine(
+                brush = brush,
+                start = Offset(
+                    x = centerX,
+                    y = centerY + radiusArc * factorArrow
+                ),
+                end = offsetTop,
+//                color = colors[INDEX_TEXT],
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+
+            drawLine(
+                brush = brush,
+                start = offsetTop,
+                end = Offset(
+                    x = centerX - radiusArc * factorOffestHor,
+                    y = centerY + radiusArc * factorOffsetVert
+                ),
+//                color = colors[INDEX_TEXT],
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+
+            drawLine(
+                brush = brush,
+                start = offsetTop,
+                end = Offset(
+                    x = centerX + radiusArc * factorOffestHor,
+                    y = centerY + radiusArc * factorOffsetVert
+                ),
+//                color = colors[INDEX_TEXT],
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
             )
         }
     }
